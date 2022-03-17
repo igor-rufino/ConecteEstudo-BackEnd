@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import constants
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-dq4z)f^*kx+(*k$ca%+q3o5jhjmg^pk1_o3sbkrgfnr4@ih-!p"
+SECRET_KEY = constants.DJANGO_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,11 +80,13 @@ WSGI_APPLICATION = "DjangoAPI.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+DB_USERNAME = constants.DB_USERNAME
+DB_PASSWORD = constants.DB_PASSWORD
 DATABASES = {
     "default": {
         "ENGINE": "djongo",
         "CLIENT": {
-            "host": "mongodb+srv://userEAD:userEAD@cluster0.gtvf0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+            "host": f"mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@cluster0.gtvf0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
             "name": "db_ead",
             "authMechanism": "SCRAM-SHA-1",
         },
