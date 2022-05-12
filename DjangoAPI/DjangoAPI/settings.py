@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "AlunoApp.apps.AlunoappConfig",
+    "WebAppEAD.apps.WebappeadConfig",
 ]
 
 MIDDLEWARE = [
