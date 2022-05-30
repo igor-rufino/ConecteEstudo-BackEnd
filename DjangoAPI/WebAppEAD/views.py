@@ -11,13 +11,22 @@ from WebAppEAD.models import (
     User,
     Material,
     TeachingPlan,
+    UserEvent,
+    UserAbsence,
+    UserAssignment,
+    UserClassroom,
 )
 from WebAppEAD.serializers import (
     EventSerializer,
     AbsenceSerializer,
+    UserAbsenceSerializer,
     AssignmentSerializer,
+    UserAssignmentSerializer,
     ClassroomSerializer,
+    UserClassroomSerializer,
+    StudentClassroomSerializer,
     UserSerializer,
+    UserEventSerializer,
     MaterialSerializer,
     TeachingPlanSerializer,
 )
@@ -27,7 +36,7 @@ from WebAppEAD.serializers import (
 def userAPI(request, id=-1):
     # GET Usuário por ID
     if request.method == "GET" and id != -1:
-        user = User.objects.get(userId=id)
+        user = User.objects.filter(userId=int(id))
         user_serializer = UserSerializer(user, many=True)
         return JsonResponse(user_serializer.data, safe=False)
 
@@ -58,206 +67,264 @@ def userAPI(request, id=-1):
 
     # DELETE deletar usuário por ID (not PROD)
     elif request.method == "DELETE":
-        user = User.objects.get(userId=id)
+        user = User.objects.get(userId=int(id))
         user.delete()
         return JsonResponse("Usuário deletado com sucesso", safe=False)
+
+
+@csrf_exempt
+def userEventAPI(request, id=-1):
+    # GET Eventos por userId
+    if request.method == "GET" and id != -1:
+        userEvent = UserEvent.objects.filter(user_id=int(id))
+        userEvent_serializer = UserEventSerializer(userEvent, many=True)
+        return JsonResponse(userEvent_serializer.data, safe=False)
+
+    # POST Novo evento
+    elif request.method == "POST":
+        userEvent_data = JSONParser().parse(request)
+        userEvent_serializer = UserEventSerializer(data=userEvent_data)
+        if userEvent_serializer.is_valid():
+            userEvent_serializer.save()
+            return JsonResponse("Evento adicionado com sucesso", safe=False)
+        return JsonResponse("Falha ao adicionar evento", safe=False)
 
 
 @csrf_exempt
 def eventAPI(request, id=-1):
     # GET Evento por ID
     if request.method == "GET" and id != -1:
-        event = Event.objects.get(eventId=id)
-        event_serializer = EventSerializer(event, many=True)
-        return JsonResponse(event_serializer.data, safe=False)
+        userEvent = UserEvent.objects.filter(eventId=int(id))
+        userEvent_serializer = UserEventSerializer(userEvent, many=True)
+        return JsonResponse(userEvent_serializer.data, safe=False)
 
     # GET Todos eventos
     elif request.method == "GET":
-        events = Event.objects.all()
-        event_serializer = EventSerializer(events, many=True)
-        return JsonResponse(event_serializer.data, safe=False)
-
-    # POST Novo evento
-    elif request.method == "POST":
-        event_data = JSONParser().parse(request)
-        event_serializer = EventSerializer(data=event_data)
-        if event_serializer.is_valid():
-            event_serializer.save()
-            return JsonResponse("Evento adicionado com sucesso", safe=False)
-        return JsonResponse("Falha ao adicionar evento", safe=False)
+        userEvents = UserEvent.objects.all()
+        userEvent_serializer = UserEventSerializer(userEvents, many=True)
+        return JsonResponse(userEvent_serializer.data, safe=False)
 
     # PUT Editar evento por ID
     elif request.method == "PUT":
-        event_data = JSONParser().parse(request)
-        event = Event.objects.get(eventId=event_data["eventId"])
-        event_serializer = EventSerializer(event, data=event_data)
-        if event_serializer.is_valid():
-            event_serializer.save()
+        userEvent_data = JSONParser().parse(request)
+        userEvent = UserEvent.objects.get(eventId=userEvent_data["eventId"])
+        userEvent_serializer = UserEventSerializer(userEvent, data=userEvent_data)
+        if userEvent_serializer.is_valid():
+            userEvent_serializer.save()
             return JsonResponse("Evento atualizado com sucesso", safe=False)
         return JsonResponse("Falha ao atualizar evento", safe=False)
 
     # DELETE deletar evento por ID
     elif request.method == "DELETE":
-        event = Event.objects.get(eventId=id)
-        event.delete()
+        userEvent = UserEvent.objects.get(eventId=int(id))
+        userEvent.delete()
         return JsonResponse("Evento deletado com sucesso", safe=False)
 
 
 @csrf_exempt
-def assignmentAPI(request, id=-1, classId=-1):
+def classAssignmentAPI(request, id=-1):
     # GET Tarefa pelo ID
     if request.method == "GET" and id != -1:
-        assignment = Assignment.objects.get(assignmentId=id)
-        assignment_serializer = AssignmentSerializer(assignment, many=True)
-        return JsonResponse(assignment_serializer.data, safe=False)
+        userAssignment = UserAssignment.objects.filter(classId=int(id))
+        userAssignment_serializer = UserAssignmentSerializer(userAssignment, many=True)
+        return JsonResponse(userAssignment_serializer.data, safe=False)
+
+    # PUT Editar todas pelo ClassId
+    elif request.method == "PUT":
+        userAssignment_data = JSONParser().parse(request)
+        userAssignments = UserAssignment.objects.filter(
+            classId=userAssignment_data["classId"]
+        )
+        try:
+            for userAssignment in userAssignments:
+                print(userAssignment.assignmentId)
+                userAssignment_data["assignmentId"] = userAssignment.assignmentId
+                userAssignment_serializer = UserAssignmentSerializer(
+                    userAssignment, data=userAssignment_data
+                )
+                if userAssignment_serializer.is_valid():
+                    userAssignment_serializer.save()
+            return JsonResponse("Tarefas atualizadas com sucesso", safe=False)
+        except:
+            return JsonResponse("Falha ao atualizar tarefas", safe=False)
+
+
+@csrf_exempt
+def assignmentAPI(request, id=-1):
+    # GET Tarefa pelo ID
+    if request.method == "GET" and id != -1:
+        userAssignment = UserAssignment.objects.filter(assignmentId=int(id))
+        userAssignment_serializer = UserAssignmentSerializer(userAssignment, many=True)
+        return JsonResponse(userAssignment_serializer.data, safe=False)
 
     # GET Todas tarefas
     elif request.method == "GET":
-        assignments = Event.objects.all()
-        assignment_serializer = AssignmentSerializer(assignments, many=True)
-        return JsonResponse(assignment_serializer.data, safe=False)
+        userAssignments = UserAssignment.objects.all()
+        userAssignment_serializer = UserAssignmentSerializer(userAssignments, many=True)
+        return JsonResponse(userAssignment_serializer.data, safe=False)
 
     # POST Nova tarefa
     elif request.method == "POST":
-        assignment_data = JSONParser().parse(request)
-        assignment_serializer = AssignmentSerializer(data=assignment_data)
-        if assignment_serializer.is_valid():
-            assignment_serializer.save()
+        userAssignment_data = JSONParser().parse(request)
+        userAssignment_serializer = UserAssignmentSerializer(data=userAssignment_data)
+        if userAssignment_serializer.is_valid():
+            userAssignment_serializer.save()
             return JsonResponse("Tarefa adicionada com sucesso", safe=False)
         return JsonResponse("Falha ao adicionar tarefa", safe=False)
 
-    # PUT Editar todas pelo ClassId
-    elif request.method == "PUT" and classId != -1:
-        assignment_data = JSONParser().parse(request)
-        assignment = Assignment.objects.get(classId=assignment_data["classId"])
-        assignment_serializer = AssignmentSerializer(assignment, data=assignment_data)
-        if assignment_serializer.is_valid():
-            assignment_serializer.save()
-            return JsonResponse("Tarefa atualizada com sucesso", safe=False)
-        return JsonResponse("Falha ao atualizar tarefa", safe=False)
-
     # PUT Editar tarefa pelo ID
     elif request.method == "PUT":
-        assignment_data = JSONParser().parse(request)
-        assignment = Assignment.objects.get(
-            assignmentId=assignment_data["assignmentId"]
+        userAssignment_data = JSONParser().parse(request)
+        userAssignment = UserAssignment.objects.get(
+            assignmentId=userAssignment_data["assignmentId"]
         )
-        assignment_serializer = AssignmentSerializer(assignment, data=assignment_data)
-        if assignment_serializer.is_valid():
-            assignment_serializer.save()
+        userAssignment_serializer = UserAssignmentSerializer(
+            userAssignment, data=userAssignment_data
+        )
+        if userAssignment_serializer.is_valid():
+            userAssignment_serializer.save()
             return JsonResponse("Tarefa atualizada com sucesso", safe=False)
         return JsonResponse("Falha ao atualizar tarefa", safe=False)
 
     # DELETE deletar tarefa por ID
     elif request.method == "DELETE":
-        assignment = Assignment.objects.get(assignmentId=id)
-        assignment.delete()
+        userAssignment = UserAssignment.objects.get(assignmentId=int(id))
+        userAssignment.delete()
         return JsonResponse("Tarefa deletada com sucesso", safe=False)
 
 
 @csrf_exempt
-def classroomAPI(request, id=-1, userId=-1):
+def userClassroomAPI(request, id=-1):
+    # GET alunos pelo classroomID
+    if request.method == "GET" and id != -1:
+        studentClassroom = UserClassroom.objects.filter(classroomId=int(id))
+        studentClassroom_serializer = StudentClassroomSerializer(
+            studentClassroom, many=True
+        )
+        return JsonResponse(studentClassroom_serializer.data, safe=False)
+
+
+@csrf_exempt
+def classroomAPI(request, id=-1):
     # GET Turma pelo ID
     if request.method == "GET" and id != -1:
-        classroom = Classroom.objects.get(classroomId=id)
-        classroom_serializer = ClassroomSerializer(classroom, many=True)
-        return JsonResponse(classroom_serializer.data, safe=False)
+        userClassroom = UserClassroom.objects.filter(classroomId=int(id))
+        userClassroom_serializer = UserClassroomSerializer(userClassroom, many=True)
+        return JsonResponse(userClassroom_serializer.data, safe=False)
+
+    # GET todas Turmas
+    if request.method == "GET":
+        userClassroom = UserClassroom.objects.all()
+        userClassroom_serializer = UserClassroomSerializer(userClassroom, many=True)
+        return JsonResponse(userClassroom_serializer.data, safe=False)
 
     # POST Nova turma
     elif request.method == "POST":
-        classroom_data = JSONParser().parse(request)
-        classroom_serializer = ClassroomSerializer(data=classroom_data)
-        if classroom_serializer.is_valid():
-            classroom_serializer.save()
+        userClassroom_data = JSONParser().parse(request)
+        userClassroom_serializer = UserClassroomSerializer(data=userClassroom_data)
+        if userClassroom_serializer.is_valid():
+            userClassroom_serializer.save()
             return JsonResponse("Turma adicionada com sucesso", safe=False)
         return JsonResponse("Falha ao adicionar turma", safe=False)
 
     # PUT Editar turma pelo ID
     elif request.method == "PUT":
-        classroom_data = JSONParser().parse(request)
-        classroom = Classroom.objects.get(classroomId=classroom_data["classroomId"])
-        classroom_serializer = ClassroomSerializer(classroom, data=classroom_data)
-        if classroom_serializer.is_valid():
-            classroom_serializer.save()
+        userClassroom_data = JSONParser().parse(request)
+        userClassroom = UserClassroom.objects.get(
+            classroomId=userClassroom_data["classroomId"]
+        )
+        userClassroom_serializer = UserClassroomSerializer(
+            userClassroom, data=userClassroom_data
+        )
+        if userClassroom_serializer.is_valid():
+            userClassroom_serializer.save()
             return JsonResponse("Turma atualizada com sucesso", safe=False)
         return JsonResponse("Falha ao atualizar turma", safe=False)
 
     # DELETE deletar tarefa por ID
     elif request.method == "DELETE":
-        classroom = Classroom.objects.get(classroomId=id)
-        classroom.delete()
+        userClassroom = UserClassroom.objects.filter(classroomId=int(id))
+        userClassroom.delete()
         return JsonResponse("Turma deletada com sucesso", safe=False)
 
 
 @csrf_exempt
-def absenceAPI(request, id=-1, classId=-1, userId=-1):
+def userAbsenceAPI(request, id=-1):
+    # GET faltas por userId
+    if request.method == "GET" and id != -1:
+        userAbsence = UserAbsence.objects.filter(user_id=int(id))
+        userAbsence_serializer = UserAbsenceSerializer(userAbsence, many=True)
+        return JsonResponse(userAbsence_serializer.data, safe=False)
+
+    # POST Nova falta por userId
+    elif request.method == "POST":
+        userAbsence_data = JSONParser().parse(request)
+        userAbsence_serializer = UserAbsenceSerializer(data=userAbsence_data)
+        if userAbsence_serializer.is_valid():
+            userAbsence_serializer.save()
+            return JsonResponse("Falta adicionado com sucesso", safe=False)
+        return JsonResponse("Falha ao adicionar falta", safe=False)
+
+
+@csrf_exempt
+def classAbsenceAPI(request, id=-1):
+    # GET faltas por classId
+    if request.method == "GET" and id != -1:
+        userAbsence = UserAbsence.objects.filter(classId=int(id))
+        userAbsence_serializer = UserAbsenceSerializer(userAbsence, many=True)
+        return JsonResponse(userAbsence_serializer.data, safe=False)
+
+
+@csrf_exempt
+def absenceAPI(request, id=-1):
     # GET Falta pelo ID (not PROD)
     if request.method == "GET" and id != -1:
-        absence = Absence.objects.get(absenceId=id)
-        absence_serializer = AbsenceSerializer(absence, many=True)
-        return JsonResponse(absence_serializer.data, safe=False)
-
-    # GET Falta pelo classId e userId
-    elif request.method == "GET" and classId != -1 and userId != -1:
-        absence = Absence.objects.get(classId=classId, userId=userId)
-        absence_serializer = AbsenceSerializer(absence, many=True)
-        return JsonResponse(absence_serializer.data, safe=False)
-
-    # GET Falta pelo userId
-    elif request.method == "GET" and userId != -1:
-        absence = Absence.objects.get(userId=userId)
-        absence_serializer = AbsenceSerializer(absence, many=True)
-        return JsonResponse(absence_serializer.data, safe=False)
-
-    # GET Falta pelo classId
-    elif request.method == "GET" and classId != -1:
-        absence = Absence.objects.get(classId=classId)
-        absence_serializer = AbsenceSerializer(absence, many=True)
-        return JsonResponse(absence_serializer.data, safe=False)
-
-    # POST Nova falta
-    elif request.method == "POST":
-        absence_data = JSONParser().parse(request)
-        absence_serializer = AbsenceSerializer(data=absence_data)
-        if absence_serializer.is_valid():
-            absence_serializer.save()
-            return JsonResponse("Falta adicionada com sucesso", safe=False)
-        return JsonResponse("Falha ao adicionar falta", safe=False)
+        userAbsence = UserAbsence.objects.filter(absenceId=int(id))
+        userAbsence_serializer = UserAbsenceSerializer(userAbsence, many=True)
+        return JsonResponse(userAbsence_serializer.data, safe=False)
 
     # PUT Editar falta pelo ID
     elif request.method == "PUT":
-        absence_data = JSONParser().parse(request)
-        absence = Absence.objects.get(absenceId=absence_data["absenceId"])
-        absence_serializer = AbsenceSerializer(absence, data=absence_data)
-        if absence_serializer.is_valid():
-            absence_serializer.save()
+        userAbsence_data = JSONParser().parse(request)
+        userAbsence = UserAbsence.objects.get(absenceId=userAbsence_data["absenceId"])
+        userAbsence_serializer = UserAbsenceSerializer(
+            userAbsence, data=userAbsence_data
+        )
+        if userAbsence_serializer.is_valid():
+            userAbsence_serializer.save()
             return JsonResponse("Falta atualizada com sucesso", safe=False)
         return JsonResponse("Falha ao atualizar falta", safe=False)
 
     # DELETE deletar tarefa por ID (not PROD)
     elif request.method == "DELETE":
-        absence = Absence.objects.get(absenceId=id)
-        absence.delete()
+        userAbsence = UserAbsence.objects.get(absenceId=id)
+        userAbsence.delete()
         return JsonResponse("Falta deletada com sucesso", safe=False)
 
 
 @csrf_exempt
-def materialAPI(request, id=-1, teacherId=-1, classId=-1):
+def teacherMaterialAPI(request, id=-1):
+    # GET Material pelo teacherId
+    if request.method == "GET" and id != -1:
+        material = Material.objects.filter(teacherId=int(id))
+        material_serializer = MaterialSerializer(material, many=True)
+        return JsonResponse(material_serializer.data, safe=False)
+
+
+@csrf_exempt
+def classMaterialAPI(request, id=-1):
+    # GET Material pelo classId
+    if request.method == "GET" and id != -1:
+        material = Material.objects.filter(classId=int(id))
+        material_serializer = MaterialSerializer(material, many=True)
+        return JsonResponse(material_serializer.data, safe=False)
+
+
+@csrf_exempt
+def materialAPI(request, id=-1):
     # GET Material pelo ID
     if request.method == "GET" and id != -1:
-        material = Material.objects.get(materialId=id)
-        material_serializer = MaterialSerializer(material, many=True)
-        return JsonResponse(material_serializer.data, safe=False)
-
-    # GET Material pelo teacherId
-    elif request.method == "GET" and teacherId != -1:
-        material = Material.objects.get(teacherId=teacherId)
-        material_serializer = MaterialSerializer(material, many=True)
-        return JsonResponse(material_serializer.data, safe=False)
-
-    # GET Material pelo classId
-    elif request.method == "GET" and classId != -1:
-        material = Material.objects.get(classId=classId)
+        material = Material.objects.filter(MaterialId=int(id))
         material_serializer = MaterialSerializer(material, many=True)
         return JsonResponse(material_serializer.data, safe=False)
 
@@ -273,7 +340,7 @@ def materialAPI(request, id=-1, teacherId=-1, classId=-1):
     # PUT Editar material pelo ID
     elif request.method == "PUT":
         material_data = JSONParser().parse(request)
-        material = Material.objects.get(materialId=material_data["materialId"])
+        material = Material.objects.get(MaterialId=material_data["MaterialId"])
         material_serializer = MaterialSerializer(material, data=material_data)
         if material_serializer.is_valid():
             material_serializer.save()
@@ -282,28 +349,31 @@ def materialAPI(request, id=-1, teacherId=-1, classId=-1):
 
     # DELETE deletar material por ID
     elif request.method == "DELETE":
-        material = Material.objects.get(materialId=id)
+        material = Material.objects.filter(MaterialId=int(id))
         material.delete()
         return JsonResponse("Material deletado com sucesso", safe=False)
 
 
 @csrf_exempt
-def teachingPlanAPI(request, id=-1, state=-1):
-    # GET Plano pelo ID
-    if request.method == "GET" and id != -1:
-        teachingPlan = TeachingPlan.objects.get(teachingPlanId=id)
-        teachingPlan_serializer = TeachingPlanSerializer(teachingPlan, many=True)
-        return JsonResponse(teachingPlan_serializer.data, safe=False)
-
+def stateTeachingPlanAPI(request, state=-1):
     # GET Plano pelo estado inativo
-    elif request.method == "GET" and state == 0:
-        teachingPlan = TeachingPlan.objects.get(state=0)
+    if request.method == "GET" and int(state) == 0:
+        teachingPlan = TeachingPlan.objects.filter(state=int(0))
         teachingPlan_serializer = TeachingPlanSerializer(teachingPlan, many=True)
         return JsonResponse(teachingPlan_serializer.data, safe=False)
 
     # GET Plano pelo estado ativo
-    elif request.method == "GET" and state == 1:
-        teachingPlan = TeachingPlan.objects.get(state=1)
+    elif request.method == "GET" and int(state) == 1:
+        teachingPlan = TeachingPlan.objects.filter(state=int(1))
+        teachingPlan_serializer = TeachingPlanSerializer(teachingPlan, many=True)
+        return JsonResponse(teachingPlan_serializer.data, safe=False)
+
+
+@csrf_exempt
+def teachingPlanAPI(request, id=-1):
+    # GET Plano pelo ID
+    if request.method == "GET" and id != -1:
+        teachingPlan = TeachingPlan.objects.filter(teachingPlanId=int(id))
         teachingPlan_serializer = TeachingPlanSerializer(teachingPlan, many=True)
         return JsonResponse(teachingPlan_serializer.data, safe=False)
 
@@ -332,6 +402,6 @@ def teachingPlanAPI(request, id=-1, state=-1):
 
     # DELETE deletar plano por ID
     elif request.method == "DELETE":
-        teachingPlan = TeachingPlan.objects.get(teachingPlanId=id)
+        teachingPlan = TeachingPlan.objects.filter(teachingPlanId=int(id))
         teachingPlan.delete()
         return JsonResponse("Plano deletado com sucesso", safe=False)

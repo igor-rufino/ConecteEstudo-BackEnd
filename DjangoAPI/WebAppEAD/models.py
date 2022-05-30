@@ -1,7 +1,6 @@
 from djongo import models
-from django import forms
 
-
+# Descontinuado
 class Event(models.Model):
     eventId = models.ObjectIdField()
     eventType = models.IntegerField()
@@ -16,6 +15,22 @@ class Event(models.Model):
     status = models.CharField(max_length=1500)
 
 
+class UserEvent(models.Model):
+    eventId = models.ObjectIdField()
+    eventType = models.IntegerField()
+    classId = models.IntegerField()
+    teacherName = models.CharField(max_length=1500)
+    title = models.CharField(max_length=1500)
+    description = models.CharField(max_length=1500)
+    dateOfEvent = models.DateTimeField()
+    createdAt = models.DateTimeField()
+    updatedAt = models.DateTimeField()
+    updatedBy = models.IntegerField()
+    status = models.CharField(max_length=1500)
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+
+
+# Descontinuado
 class Absence(models.Model):
     absenceId = models.ObjectIdField()
     studentId = models.IntegerField()
@@ -26,6 +41,17 @@ class Absence(models.Model):
     updatedAt = models.DateTimeField()
 
 
+class UserAbsence(models.Model):
+    absenceId = models.ObjectIdField()
+    count = models.IntegerField()
+    classId = models.IntegerField()
+    date = models.DateTimeField()
+    createdAt = models.DateTimeField()
+    updatedAt = models.DateTimeField()
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+
+
+# Descontinuado
 class Assignment(models.Model):
     assignmentId = models.ObjectIdField()
     identifier = models.IntegerField()
@@ -42,11 +68,36 @@ class Assignment(models.Model):
     attachment = models.CharField(max_length=1500)
 
 
+class UserAssignment(models.Model):
+    assignmentId = models.ObjectIdField()
+    identifier = models.IntegerField()
+    title = models.CharField(max_length=1500)
+    classId = models.IntegerField()
+    createdAt = models.DateTimeField()
+    updatedAt = models.DateTimeField()
+    createdBy = models.IntegerField()
+    updatedBy = models.IntegerField()
+    deliveredAt = models.DateTimeField()
+    deliveredMaterial = models.CharField(max_length=1500)
+    score = models.FloatField()
+    attachment = models.CharField(max_length=1500)
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+
+
+# Descontinuado
 class Classroom(models.Model):
     classroomId = models.ObjectIdField()
     createdAt = models.DateTimeField()
     updatedAt = models.DateTimeField()
     createdBy = models.IntegerField()
+
+
+class UserClassroom(models.Model):
+    classroomId = models.ObjectIdField()
+    createdAt = models.DateTimeField()
+    updatedAt = models.DateTimeField()
+    createdBy = models.IntegerField()
+    user = models.ManyToManyField("User")
 
 
 class User(models.Model):
@@ -59,10 +110,6 @@ class User(models.Model):
     profileType = models.IntegerField()
     createdAt = models.DateTimeField()
     updatedAt = models.DateTimeField()
-    events = models.ArrayField(model_container=Event)
-    absences = models.ArrayField(model_container=Absence)
-    assignments = models.EmbeddedField(model_container=Assignment)
-    classrooms = models.EmbeddedField(model_container=Classroom)
 
 
 class Material(models.Model):
@@ -74,7 +121,7 @@ class Material(models.Model):
     updatedAt = models.DateTimeField()
     createdBy = models.IntegerField()
     classId = models.IntegerField()
-    teatcherId = models.IntegerField()
+    teacherId = models.IntegerField()
 
 
 class TeachingPlan(models.Model):

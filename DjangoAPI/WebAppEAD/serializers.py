@@ -2,15 +2,20 @@
 from rest_framework import serializers
 from WebAppEAD.models import (
     Event,
+    UserEvent,
     Absence,
+    UserAbsence,
     Assignment,
+    UserAssignment,
     Classroom,
+    UserClassroom,
     User,
     Material,
     TeachingPlan,
 )
 
 
+# Descontinuado
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
@@ -29,6 +34,26 @@ class EventSerializer(serializers.ModelSerializer):
         )
 
 
+class UserEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserEvent
+        fields = (
+            "eventId",
+            "eventType",
+            "classId",
+            "teacherName",
+            "title",
+            "description",
+            "dateOfEvent",
+            "createdAt",
+            "updatedAt",
+            "updatedBy",
+            "status",
+            "user",
+        )
+
+
+# Descontinuado
 class AbsenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Absence
@@ -43,6 +68,21 @@ class AbsenceSerializer(serializers.ModelSerializer):
         )
 
 
+class UserAbsenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAbsence
+        fields = (
+            "absenceId",
+            "count",
+            "classId",
+            "date",
+            "createdAt",
+            "updatedAt",
+            "user",
+        )
+
+
+# Descontinuado
 class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
@@ -63,6 +103,26 @@ class AssignmentSerializer(serializers.ModelSerializer):
         )
 
 
+class UserAssignmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAssignment
+        fields = (
+            "assignmentId",
+            "identifier",
+            "title",
+            "classId",
+            "createdAt",
+            "updatedAt",
+            "createdBy",
+            "updatedBy",
+            "deliveredAt",
+            "deliveredMaterial",
+            "score",
+            "attachment",
+            "user",
+        )
+
+
 class ClassroomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Classroom
@@ -74,6 +134,27 @@ class ClassroomSerializer(serializers.ModelSerializer):
         )
 
 
+class UserClassroomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserClassroom
+        fields = (
+            "classroomId",
+            "createdAt",
+            "updatedAt",
+            "createdBy",
+            "user",
+        )
+
+
+class StudentClassroomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserClassroom
+        fields = (
+            "classroomId",
+            "user",
+        )
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -81,15 +162,12 @@ class UserSerializer(serializers.ModelSerializer):
             "userId",
             "userName",
             "email",
+            "password",
             "phone",
             "birthdate",
             "profileType",
             "createdAt",
             "updatedAt",
-            "events",
-            "absences",
-            "assignments",
-            "classrooms",
         )
 
 
@@ -105,7 +183,7 @@ class MaterialSerializer(serializers.ModelSerializer):
             "updatedAt",
             "createdBy",
             "classId",
-            "teatcherId",
+            "teacherId",
         )
 
 
