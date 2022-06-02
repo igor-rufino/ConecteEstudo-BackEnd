@@ -21,4 +21,6 @@ from django.urls import include, re_path
 urlpatterns = [
     path("admin/", admin.site.urls),
     re_path(r"^", include("WebAppEAD.urls")),
+    re_path(r"^", include("AlunoApp.urls")),
+
 ]

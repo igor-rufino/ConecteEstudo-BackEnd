@@ -3,8 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 
-from AlunoApp.models import Alunos
-from AlunoApp.serializers import AlunoSerializer
+from AlunoApp.models import Alunos, StudentLogin
+from AlunoApp.serializers import AlunoSerializer, StudentLoginSerializer
 
 
 @csrf_exempt
@@ -35,3 +35,21 @@ def alunoAPI(request, id=0):
         aluno = Alunos.objects.get(AlunoId=id)
         aluno.delete()
         return JsonResponse("Deletado com sucesso", safe=False)
+
+
+@csrf_exempt
+def alunoLoginAPI(request, email):
+    # POST Novo usuário
+    if request.method == "POST":
+        student_login = JSONParser().parse(request)
+        student_login_serializer = StudentLoginSerializer(data=student_login)
+        if student_login_serializer.is_valid():
+            student_login_serializer.save()
+            return JsonResponse("Login realizado com sucesso", safe=False)
+        return JsonResponse("Credenciais incorretas", safe=False)
+    
+    elif request.method == "GET":
+        alunoLogin = StudentLogin.objects.get()
+        user = StudentLogin.objects.get(email=AlunoEmail)
+        StudentLoginSerializer = StudentLoginSerializer(user, many=True)
+        return JsonResponse(StudentLoginSerializer.data, safe=False)
