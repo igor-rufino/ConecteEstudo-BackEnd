@@ -2,6 +2,14 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
+import json
+
+
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    BaseUserManager,
+)
 
 from WebAppEAD.models import (
     Event,
@@ -15,6 +23,8 @@ from WebAppEAD.models import (
     UserAbsence,
     UserAssignment,
     UserClassroom,
+    UserAccount,
+    UserAccountManager,
 )
 from WebAppEAD.serializers import (
     EventSerializer,
@@ -29,6 +39,7 @@ from WebAppEAD.serializers import (
     UserEventSerializer,
     MaterialSerializer,
     TeachingPlanSerializer,
+    UserCreateSerializer,
 )
 
 
@@ -52,7 +63,12 @@ def userAPI(request, id=-1):
         user_serializer = UserSerializer(data=user_data)
         if user_serializer.is_valid():
             user_serializer.save()
-            return JsonResponse("Usuário adicionado com sucesso", safe=False)
+            userAccount = UserAccount.objects.create_user(
+                email=user_data["email"],
+                name=user_data["userName"],
+                password=user_data["password"],
+            )
+            return JsonResponse(user_serializer.data, safe=False)
         return JsonResponse("Falha ao adicionar usuário", safe=False)
 
     # PUT Editar info do usuário por ID
@@ -86,7 +102,7 @@ def userEventAPI(request, id=-1):
         userEvent_serializer = UserEventSerializer(data=userEvent_data)
         if userEvent_serializer.is_valid():
             userEvent_serializer.save()
-            return JsonResponse("Evento adicionado com sucesso", safe=False)
+            return JsonResponse(userEvent_serializer.data, safe=False)
         return JsonResponse("Falha ao adicionar evento", safe=False)
 
 
@@ -169,7 +185,7 @@ def assignmentAPI(request, id=-1):
         userAssignment_serializer = UserAssignmentSerializer(data=userAssignment_data)
         if userAssignment_serializer.is_valid():
             userAssignment_serializer.save()
-            return JsonResponse("Tarefa adicionada com sucesso", safe=False)
+            return JsonResponse(userAssignment_serializer.data, safe=False)
         return JsonResponse("Falha ao adicionar tarefa", safe=False)
 
     # PUT Editar tarefa pelo ID
@@ -224,7 +240,7 @@ def classroomAPI(request, id=-1):
         userClassroom_serializer = UserClassroomSerializer(data=userClassroom_data)
         if userClassroom_serializer.is_valid():
             userClassroom_serializer.save()
-            return JsonResponse("Turma adicionada com sucesso", safe=False)
+            return JsonResponse(userClassroom_serializer.data, safe=False)
         return JsonResponse("Falha ao adicionar turma", safe=False)
 
     # PUT Editar turma pelo ID
@@ -262,7 +278,7 @@ def userAbsenceAPI(request, id=-1):
         userAbsence_serializer = UserAbsenceSerializer(data=userAbsence_data)
         if userAbsence_serializer.is_valid():
             userAbsence_serializer.save()
-            return JsonResponse("Falta adicionado com sucesso", safe=False)
+            return JsonResponse(userAbsence_serializer.data, safe=False)
         return JsonResponse("Falha ao adicionar falta", safe=False)
 
 
@@ -334,7 +350,7 @@ def materialAPI(request, id=-1):
         material_serializer = MaterialSerializer(data=material_data)
         if material_serializer.is_valid():
             material_serializer.save()
-            return JsonResponse("Material adicionado com sucesso", safe=False)
+            return JsonResponse(material_serializer.data, safe=False)
         return JsonResponse("Falha ao adicionar material", safe=False)
 
     # PUT Editar material pelo ID
@@ -383,7 +399,7 @@ def teachingPlanAPI(request, id=-1):
         teachingPlan_serializer = TeachingPlanSerializer(data=teachingPlan_data)
         if teachingPlan_serializer.is_valid():
             teachingPlan_serializer.save()
-            return JsonResponse("Plano adicionado com sucesso", safe=False)
+            return JsonResponse(teachingPlan_serializer.data, safe=False)
         return JsonResponse("Falha ao adicionar plano", safe=False)
 
     # PUT Editar plano pelo ID

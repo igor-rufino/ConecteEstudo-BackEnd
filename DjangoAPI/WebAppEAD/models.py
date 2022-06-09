@@ -1,4 +1,11 @@
+import email
+from unicodedata import name
 from djongo import models
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    BaseUserManager,
+)
 
 # Descontinuado
 class Event(models.Model):
@@ -103,7 +110,7 @@ class UserClassroom(models.Model):
 class User(models.Model):
     userId = models.ObjectIdField()
     userName = models.CharField(max_length=1500)
-    email = models.CharField(max_length=1500)
+    email = models.CharField(max_length=1500, unique=True)
     password = models.CharField(max_length=1500)
     phone = models.CharField(max_length=1500)
     birthdate = models.DateTimeField()
@@ -134,3 +141,31 @@ class TeachingPlan(models.Model):
     absencesLimit = models.IntegerField()
     year = models.DateField()
     evaluation = models.CharField(max_length=1500)
+
+
+class UserAccountManager(BaseUserManager):
+    def create_user(self, email, name, password=None):
+        if not email:
+            raise ValueError("Usuário deve ter um email")
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, name=name)
+        user.set_password(password)
+        user.save()
+
+        return user
+
+
+class UserAccount(AbstractBaseUser, PermissionsMixin):
+    id = models.ObjectIdField()
+    email = models.EmailField(max_length=1500, unique=True)
+    name = models.CharField(max_length=1500)
+    is_active = models.BooleanField(default=True)
+
+    objects = UserAccountManager()
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["name"]
+
+    def __str__(self):
+        return self.email
