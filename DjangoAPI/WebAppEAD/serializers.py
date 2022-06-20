@@ -13,6 +13,16 @@ from WebAppEAD.models import (
     Material,
     TeachingPlan,
 )
+from djoser.serializers import UserCreateSerializer
+from django.contrib.auth import get_user_model
+
+DjoserUser = get_user_model()
+
+
+class UserCreateSerializer(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        model = DjoserUser
+        fields = ("id", "email", "name", "password")
 
 
 # Descontinuado
