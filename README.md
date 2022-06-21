@@ -1,4 +1,4 @@
-# webapp-ead
+# ConecteEstudo-BackEnd
 ## Conecte Estudo
 
 [Conecte Estudo](https://github.com/igor-rufino/webapp-ead) is a web application to aid distance learning, which includes a virtual agenda for the user.
