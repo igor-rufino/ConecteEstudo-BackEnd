@@ -138,6 +138,15 @@ def eventAPI(request, id=-1):
 
 
 @csrf_exempt
+def userAssignmentAPI(request, id=-1):
+    # GET Tarefa por userId
+    if request.method == "GET" and id != -1:
+        userAssignment = UserAssignment.objects.filter(user_id=int(id))
+        userAssignment_serializer = UserAssignmentSerializer(userAssignment, many=True)
+        return JsonResponse(userAssignment_serializer.data, safe=False)
+
+
+@csrf_exempt
 def classAssignmentAPI(request, id=-1):
     # GET Tarefa pelo ID
     if request.method == "GET" and id != -1:

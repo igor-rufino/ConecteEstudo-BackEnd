@@ -10,6 +10,8 @@ urlpatterns = [
     re_path(r"^event/([0-9]+)$", views.eventAPI),
     re_path(r"^userEvent$", views.userEventAPI, name="userEventAPI"),
     re_path(r"^userEvent/([0-9]+)$", views.userEventAPI),
+    re_path(r"^userAssignment$", views.userAssignmentAPI, name="userAssignmentAPI"),
+    re_path(r"^userAssignment/([0-9]+)$", views.userAssignmentAPI),
     re_path(r"^classAssignment$", views.classAssignmentAPI, name="classAssignmentAPI"),
     re_path(r"^classAssignment/([0-9]+)$", views.classAssignmentAPI),
     re_path(r"^assignment$", views.assignmentAPI, name="assignmentAPI"),
