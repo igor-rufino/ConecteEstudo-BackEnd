@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "cb8ef151-dc99-4f13-bf23-c9072f0f3694",
+		"_postman_id": "c329eff1-ff66-4008-a8be-c0f1090e4091",
 		"name": "webapp-ead",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "20700058"
+		"_exporter_id": "12304135"
 	},
 	"item": [
 		{
@@ -1294,6 +1294,57 @@
 						"jwt",
 						"verify",
 						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET tarefa (por user id)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/userAssignment/10",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"userAssignment",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET user (por email)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "email",
+						"value": "email4@testecadastro.com",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/userEmail",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"userEmail"
 					]
 				}
 			},

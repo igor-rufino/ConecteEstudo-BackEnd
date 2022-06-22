@@ -1,3 +1,6 @@
+import email
+import string
+from django.forms import model_to_dict
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
@@ -86,6 +89,17 @@ def userAPI(request, id=-1):
         user = User.objects.get(userId=int(id))
         user.delete()
         return JsonResponse("Usuário deletado com sucesso", safe=False)
+
+
+@csrf_exempt
+def userEmailAPI(request):
+    # GET Usuário por ID
+    if request.method == "GET":
+        header = request.headers
+        userEmail = header["email"]
+        user = User.objects.filter(email=userEmail)
+        user_serializer = UserSerializer(user, many=True)
+        return JsonResponse(user_serializer.data, safe=False)
 
 
 @csrf_exempt

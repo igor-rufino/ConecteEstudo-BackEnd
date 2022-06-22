@@ -6,6 +6,8 @@ from django.urls import include, re_path
 urlpatterns = [
     re_path(r"^user$", views.userAPI, name="userAPI"),
     re_path(r"^user/([0-9]+)$", views.userAPI),
+    re_path(r"^userEmail$", views.userEmailAPI, name="userEmailAPI"),
+    re_path(r"^userEmail/([0-9]+)$", views.userEmailAPI),
     re_path(r"^event$", views.eventAPI, name="eventAPI"),
     re_path(r"^event/([0-9]+)$", views.eventAPI),
     re_path(r"^userEvent$", views.userEventAPI, name="userEventAPI"),
