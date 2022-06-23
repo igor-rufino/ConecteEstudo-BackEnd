@@ -55,6 +55,7 @@ class UserEventSerializer(serializers.ModelSerializer):
             "title",
             "description",
             "dateOfEvent",
+            "timeOfEvent",
             "createdAt",
             "updatedAt",
             "updatedBy",
