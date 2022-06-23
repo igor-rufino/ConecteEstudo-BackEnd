@@ -152,6 +152,7 @@ class UserClassroomSerializer(serializers.ModelSerializer):
         model = UserClassroom
         fields = (
             "classroomId",
+            "className",
             "createdAt",
             "updatedAt",
             "createdBy",
@@ -205,12 +206,18 @@ class TeachingPlanSerializer(serializers.ModelSerializer):
         model = TeachingPlan
         fields = (
             "teachingPlanId",
+            "classId",
             "title",
-            "description",
-            "teacherName",
             "state",
             "workload",
             "absencesLimit",
             "year",
-            "evaluation",
+            "teacherName",
+            "content",
+            "objective",
+            "teachingProcedure",
+            "didacticResource",
+            "evaluationProcedure",
+            "approvalCriteria",
+            "references",
         )

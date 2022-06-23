@@ -104,6 +104,7 @@ class Classroom(models.Model):
 
 class UserClassroom(models.Model):
     classroomId = models.ObjectIdField()
+    className = models.CharField(max_length=1500)
     createdAt = models.DateTimeField()
     updatedAt = models.DateTimeField()
     createdBy = models.IntegerField()
@@ -136,14 +137,20 @@ class Material(models.Model):
 
 class TeachingPlan(models.Model):
     teachingPlanId = models.ObjectIdField()
+    classId = classId = models.IntegerField()
     title = models.CharField(max_length=1500)
-    description = models.CharField(max_length=1500)
-    teacherName = models.CharField(max_length=1500)
     state = models.IntegerField()
     workload = models.IntegerField()
     absencesLimit = models.IntegerField()
-    year = models.DateField()
-    evaluation = models.CharField(max_length=1500)
+    year = models.CharField(max_length=1500)
+    teacherName = models.CharField(max_length=1500)
+    content = models.CharField(max_length=1500)
+    objective = models.CharField(max_length=1500)
+    teachingProcedure = models.CharField(max_length=1500)
+    didacticResource = models.CharField(max_length=1500)
+    evaluationProcedure = models.CharField(max_length=1500)
+    approvalCriteria = models.CharField(max_length=1500)
+    references = models.CharField(max_length=1500)
 
 
 class UserAccountManager(BaseUserManager):

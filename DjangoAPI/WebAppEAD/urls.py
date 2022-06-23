@@ -37,6 +37,10 @@ urlpatterns = [
     re_path(r"^teachingPlan$", views.teachingPlanAPI, name="teachingPlanAPI"),
     re_path(r"^teachingPlan/([0-9]+)$", views.teachingPlanAPI),
     re_path(
+        r"^classTeachingPlan$", views.classTeachingPlanAPI, name="classTeachingPlanAPI"
+    ),
+    re_path(r"^classTeachingPlan/([0-9]+)$", views.classTeachingPlanAPI),
+    re_path(
         r"^stateTeachingPlan$", views.stateTeachingPlanAPI, name="stateTeachingPlanAPI"
     ),
     re_path(r"^stateTeachingPlan/([0-9]+)$", views.stateTeachingPlanAPI),

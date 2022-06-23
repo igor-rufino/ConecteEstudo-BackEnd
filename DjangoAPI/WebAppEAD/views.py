@@ -405,6 +405,15 @@ def stateTeachingPlanAPI(request, state=-1):
 
 
 @csrf_exempt
+def classTeachingPlanAPI(request, id=-1):
+    # GET Plano pelo classId
+    if request.method == "GET" and id != -1:
+        teachingPlan = TeachingPlan.objects.filter(classId=int(id))
+        teachingPlan_serializer = TeachingPlanSerializer(teachingPlan, many=True)
+        return JsonResponse(teachingPlan_serializer.data, safe=False)
+
+
+@csrf_exempt
 def teachingPlanAPI(request, id=-1):
     # GET Plano pelo ID
     if request.method == "GET" and id != -1:
