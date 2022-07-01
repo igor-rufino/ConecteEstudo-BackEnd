@@ -4,4 +4,4 @@ Django
 djangorestframework
 djongo
 djoser
-corsheaders
+django-cors-headers
