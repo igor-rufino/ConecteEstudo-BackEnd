@@ -4,3 +4,4 @@ Django
 djangorestframework
 djongo
 djoser
+corsheaders
