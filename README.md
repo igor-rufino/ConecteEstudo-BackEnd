@@ -1,3 +1,4 @@
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/igor-rufino/ConecteEstudo-BackEnd/Django%20CI)
 <h1 align="center"> Conecte Estudo: Plataforma Web para Auxílio no Ensino à Distância </h1>
 <h3 align="center"> Projeto desenvolvido para o Trabalho de Conclusão de Curso (TCC) de alunos do 10º período de Engenharia da Computação pelo <a href="https://inatel.br/home/">INATEL</a></h3>
 
