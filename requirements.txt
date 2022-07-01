@@ -5,3 +5,4 @@ djangorestframework
 djongo
 djoser
 django-cors-headers
+pymongo[srv]
