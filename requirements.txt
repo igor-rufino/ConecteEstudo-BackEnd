@@ -6,4 +6,4 @@ djongo
 djoser
 django-cors-headers
 pymongo==3.12.1
-#pymongo[srv]
+pymongo[srv]
